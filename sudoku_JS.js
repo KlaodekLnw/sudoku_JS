@@ -7,7 +7,8 @@ const grid = [[0,0,0,0,0,0,0,0,0],
               [0,0,0,0,0,0,0,0,0],
               [0,0,0,0,0,0,0,0,0],
               [0,0,0,0,0,0,0,0,0],];
-
+const num = [];
+let temp = 0;
 function check_rule(board,row,col,num){
     //check row
     for(let i = 0; i < 9; i++){
@@ -20,12 +21,17 @@ function check_rule(board,row,col,num){
     }
         
     //check box 3x3
-    let box_start_row = Math.floor(row/3)*3;
-    let box_start_col = Math.floor(col/3)*3;
+    let pos_box_x = Math.floor(col/3);
+    let pos_box_y = Math.floor(row/3);
     
+    let box_start_row = Math.floor(row / 3) * 3;
+    let box_start_col = Math.floor(col / 3) * 3;
+
     for(let i = 0; i < 3; i++){
         for(let j = 0; j < 3; j++){
-            if(num == board[box_start_row + i][box_start_col + j]) return false;
+            if(board[box_start_row + i][box_start_col + j] == num){
+                return false;
+            }
         }
     }
     return true;
@@ -40,26 +46,31 @@ function find_entry_cell(board){
     return null;
 }
 
-function sudoku() {
+function sudoku(){
     const pos = find_entry_cell(grid);
-    if (!pos) return true;
-
-    const [row, col] = pos;
-
-    for (let num = 1; num <= 9; num++) {
-        if (check_rule(grid, row, col, num)) {
-            grid[row][col] = num;
-
-            if (sudoku()) return true;
-
-            grid[row][col] = 0; // backtrack
+    if(pos != null){
+        const [row,col] = pos;
+        for(let i = 0; i < num.length; i++){
+            if(check_rule(grid,row,col,num[i])){
+                grid[row][col]=num[i];
+                if(sudoku()) return true;
+                grid[row][col]=0;
+            }
         }
+        return false;
+    }else{
+        return true;
     }
-
-    return false;
 }
-
-
+                
+function generate_game(){
+    sudoku()
+    for (let i = 0; i < 40; i++){ 
+        let row = Math.floor(Math.random() * 9);
+        let col = Math.floor(Math.random() * 9);
+        grid[row][col] = 0;
+    }
+}
 
 function draw_table(){
     strokeWeight(3);
@@ -75,6 +86,7 @@ function draw_table(){
     line(0,height/9*5,width,height/9*5);
     line(0,height/9*7,width,height/9*7);
     line(0,height/9*8,width,height/9*8);
+    
     line(width/9,0,width/9,height);
     line(width/9*2,0,width/9*2,height);
     line(width/9*4,0,width/9*4,height);
@@ -96,10 +108,17 @@ function show(){
 }
 
 function setup(){
-    createCanvas(900,900);
-    sudoku();
+    for(let i = 0; i < 9; i++){
+        let temp = Math.floor(Math.random() * 9)+1;
+        while(num.includes(temp)){
+            temp = Math.floor(Math.random() * 9)+1;
+        }
+        num.push(temp);
+    }
+    createCanvas(1270,900);
+    generate_game();
 }
-
+    
 function draw(){
     background(250);
     draw_table();  
