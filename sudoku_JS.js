@@ -7,8 +7,13 @@ const grid = [[0,0,0,0,0,0,0,0,0],
               [0,0,0,0,0,0,0,0,0],
               [0,0,0,0,0,0,0,0,0],
               [0,0,0,0,0,0,0,0,0],];
-const num = [];
+let num = [];
 let temp = 0;
+let entry_cell = [];
+let answer = [];
+let status = 2;
+let correct_cell = [];
+let selected_cell = [-1, -1];
 function check_rule(board,row,col,num){
     //check row
     for(let i = 0; i < 9; i++){
@@ -64,11 +69,23 @@ function sudoku(){
 }
                 
 function generate_game(){
+    entry_cell = [];
+    answer = [];
     sudoku()
+    for (let i = 0; i < 9; i++) {
+        let row = [];
+        for (let j = 0; j < 9; j++) {
+            row.push(grid[i][j]);
+        }
+        answer.push(row);
+    }
     for (let i = 0; i < 40; i++){ 
         let row = Math.floor(Math.random() * 9);
         let col = Math.floor(Math.random() * 9);
-        grid[row][col] = 0;
+        if (grid[row][col] !== 0){
+            grid[row][col] = 0;
+            entry_cell.push([row, col]);
+        }
     }
 }
 
@@ -96,12 +113,75 @@ function draw_table(){
 }
 
 function show(){
-    fill(0)
-    textSize(20)
+    textSize(20);
+    let cell_w = width / 9;
+    let cell_h = height / 9;
+
     for(let i = 0; i < 9; i++){
         for(let j = 0; j < 9; j++){
-            if(grid[i][j] != 0){
-                text(grid[i][j],width/18*2*j+(width/18),height/18*2*i+(height/18))
+            if (correct_cell.some(c => c[0] === i && c[1] === j)) {
+                fill(102, 255, 102);
+                noStroke();
+                rect(j * cell_w, i * cell_h, cell_w, cell_h);
+                stroke(0);
+            }
+            if (selected_cell[0] === i && selected_cell[1] === j) {
+                fill(180);
+                noStroke();
+                rect(j * cell_w, i * cell_h, cell_w, cell_h);
+                stroke(0);
+            }
+            if(grid[i][j] !== 0){
+                fill(0);
+                text(grid[i][j], cell_w * j + cell_w / 2, cell_h * i + cell_h / 1.5);
+            }
+            if (status === 3 && grid[i][j] !== answer[i][j] && entry_cell.some(c => c[0] === i && c[1] === j)) {
+                fill(255, 0, 0); // แดง
+                noStroke();
+                rect(j * cell_w, i * cell_h, cell_w, cell_h);
+                stroke(0);
+                fill(0);
+                text(grid[i][j], cell_w * j + cell_w / 2, cell_h * i + cell_h / 1.5);
+            }
+        }
+    }
+}
+
+function mousePressed() {
+    if (status !== 1) {
+        let cell_w = width / 9;
+        let cell_h = height / 9;
+        let col = Math.floor(mouseX / cell_w);
+        let row = Math.floor(mouseY / cell_h);
+        if (row >= 0 && row < 9 && col >= 0 && col < 9) {
+            if (entry_cell.some(cell => cell[0] === row && cell[1] === col)) {
+                selected_cell = [row, col];
+            } else {
+                selected_cell = [-1, -1];
+            }
+        }
+    }
+}
+
+function keyPressed(){
+    if (selected_cell[0] === -1 && selected_cell[1] === -1) return;
+    let row = selected_cell[0];
+    let col = selected_cell[1];
+    if ("123456789".includes(key) && status === 2) {
+        if (entry_cell.some(cell => cell[0] === row && cell[1] === col)) {
+            grid[row][col] = parseInt(key);
+        }
+    } else if (key === '0' || keyCode === DELETE) {
+        if (entry_cell.some(cell => cell[0] === row && cell[1] === col)) {
+            grid[row][col] = 0;
+        }
+    } else if (keyCode === ENTER) {
+        status = 3;
+        correct_cell = [];
+        for (let i = 0; i < entry_cell.length; i++) {
+            let [r, c] = entry_cell[i];
+            if (grid[r][c] === answer[r][c]) {
+                correct_cell.push([r, c]);
             }
         }
     }
@@ -112,11 +192,12 @@ function setup(){
         let temp = Math.floor(Math.random() * 9)+1;
         while(num.includes(temp)){
             temp = Math.floor(Math.random() * 9)+1;
-        }
+        }  
         num.push(temp);
     }
     createCanvas(1270,900);
     generate_game();
+    status = 2;
 }
     
 function draw(){
