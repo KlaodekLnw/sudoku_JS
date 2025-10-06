@@ -15,6 +15,8 @@ let answer = [];
 let status = 1;
 let correct_cell = [];
 let selected_cell = [-1, -1];
+let load = false;
+
 function check_rule(board,row,col,num){
     //check row
     for(let i = 0; i < 9; i++){
@@ -95,7 +97,7 @@ function interface(){
     fill(0);
     textSize(100);
     text("sudoku",(width-300)/2,150);
-    textSize(50);
+    textSize(45);
     text("new game",(width-200)/2,height-400);
     text("load game",(width-200)/2,height-200);
     
@@ -174,6 +176,72 @@ function show(){
     }
 }
 
+function load_game() {
+    loadStrings("save_game.txt", (lines) => {
+      for (let i = 0; i < 9; i++) {
+        let str_values = lines[i].split(",");
+        let row = [];
+  
+        for (let v of str_values) {
+          if (v !== "") {
+            row.push(int(v));
+          }
+        }
+  
+        answer.push(row);
+        let copied_row = [];
+        for (let val of row) {
+          copied_row.push(val);
+        }
+        grid.push(copied_row);
+      }
+  
+      let header = lines[9];
+      if (header !== "ENTRY_CELL") {
+        print("error");
+        return;
+      }
+  
+      for (let i = 10; i < lines.length; i++) {
+        let coords = lines[i].trim().split(",");
+        if (coords.length === 2) {
+          let r = int(coords[0]);
+          let c = int(coords[1]);
+          entry_cell.push([r, c]);
+  
+          for (let i = 0; i < 9; i++) {
+            for (let j = 0; j < 9; j++) {
+              if (i === r && j === c) {
+                grid[i][j] = 0;
+              }
+            }
+          }
+        }
+      }
+      status = 2;
+    });
+}
+
+function save_game() {
+    let content = "";
+  
+    // ------------------ save answer ------------------
+    for (let r = 0; r < 9; r++) {
+      for (let c = 0; c < 9; c++) {
+        content += str(answer[r][c]) + ",";
+      }
+      content += "\n";
+    }
+  
+    // ------------------ save entry cell ------------------
+    content += "ENTRY_CELL\n";
+    for (let cell of entry_cell) {
+      content += cell[0] + "," + cell[1] + "\n";
+    }
+  
+    saveStrings([content], "save_game.txt");
+}
+
 function mousePressed() {
     if (status === 1) {
         let x = mouseX;
@@ -185,6 +253,7 @@ function mousePressed() {
           status = 2;
         } else if (x > width / 2 - 120 && x < width / 2 + 125 && y > height - 250 && y < height - 180) {
           print("load");
+          load_game();
         }
     }
 
