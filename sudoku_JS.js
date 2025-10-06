@@ -136,7 +136,7 @@ function show(){
                 text(grid[i][j], cell_w * j + cell_w / 2, cell_h * i + cell_h / 1.5);
             }
             if (status === 3 && grid[i][j] !== answer[i][j] && entry_cell.some(c => c[0] === i && c[1] === j)) {
-                fill(255, 0, 0); // แดง
+                fill(255, 0, 0);
                 noStroke();
                 rect(j * cell_w, i * cell_h, cell_w, cell_h);
                 stroke(0);
