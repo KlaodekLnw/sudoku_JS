@@ -7,11 +7,12 @@ const grid = [[0,0,0,0,0,0,0,0,0],
               [0,0,0,0,0,0,0,0,0],
               [0,0,0,0,0,0,0,0,0],
               [0,0,0,0,0,0,0,0,0],];
+
 let num = [];
 let temp = 0;
 let entry_cell = [];
 let answer = [];
-let status = 2;
+let status = 1;
 let correct_cell = [];
 let selected_cell = [-1, -1];
 function check_rule(board,row,col,num){
@@ -89,6 +90,26 @@ function generate_game(){
     }
 }
 
+function interface(){
+    background(200);
+    fill(0);
+    textSize(100);
+    text("sudoku",(width-300)/2,150);
+    textSize(50);
+    text("new game",(width-200)/2,height-400);
+    text("load game",(width-200)/2,height-200);
+    
+    line(width/2-120,height-450,width/2+125,height-450);
+    line(width/2-120,height-380,width/2+125,height-380);
+    line(width/2-120,height-450,width/2-120,height-380);
+    line(width/2+125,height-450,width/2+125,height-380);
+
+    line(width/2-120,height-250,width/2+125,height-250);
+    line(width/2-120,height-180,width/2+125,height-180);
+    line(width/2-120,height-250,width/2-120,height-180);
+    line(width/2+125,height-250,width/2+125,height-180);
+}
+
 function draw_table(){
     strokeWeight(3);
     line(0,height/3,width,height/3);
@@ -134,20 +155,39 @@ function show(){
             if(grid[i][j] !== 0){
                 fill(0);
                 text(grid[i][j], cell_w * j + cell_w / 2, cell_h * i + cell_h / 1.5);
+                if (status === 3 && grid[i][j] !== answer[i][j] && entry_cell.some(c => c[0] === i && c[1] === j)) {
+                    fill(255, 0, 0);
+                    noStroke();
+                    rect(j * cell_w, i * cell_h, cell_w, cell_h);
+                    stroke(0);
+                    fill(0);
+                    text(grid[i][j], cell_w * j + cell_w / 2, cell_h * i + cell_h / 1.5);
+                }
             }
-            if (status === 3 && grid[i][j] !== answer[i][j] && entry_cell.some(c => c[0] === i && c[1] === j)) {
+            if (grid[i][j] === 0 && status === 3) {
                 fill(255, 0, 0);
                 noStroke();
                 rect(j * cell_w, i * cell_h, cell_w, cell_h);
                 stroke(0);
-                fill(0);
-                text(grid[i][j], cell_w * j + cell_w / 2, cell_h * i + cell_h / 1.5);
             }
         }
     }
 }
 
 function mousePressed() {
+    if (status === 1) {
+        let x = mouseX;
+        let y = mouseY;
+      
+        if (x > width / 2 - 120 && x < width / 2 + 125 &&
+            y > height - 450 && y < height - 380) {
+          print("new");
+          status = 2;
+        } else if (x > width / 2 - 120 && x < width / 2 + 125 && y > height - 250 && y < height - 180) {
+          print("load");
+        }
+    }
+
     if (status !== 1) {
         let cell_w = width / 9;
         let cell_h = height / 9;
@@ -197,11 +237,15 @@ function setup(){
     }
     createCanvas(1270,900);
     generate_game();
-    status = 2;
+    print(answer);
 }
     
 function draw(){
-    background(250);
-    draw_table();  
-    show();
+    if(status == 1){
+        interface();
+    }else{
+        background(250);
+        draw_table();  
+        show();
+    }
 }
