@@ -16,6 +16,7 @@ let status = 1;
 let correct_cell = [];
 let selected_cell = [-1, -1];
 let load = false;
+let editable = true;
 
 function check_rule(board,row,col,num){
     //check row
@@ -177,49 +178,44 @@ function show(){
 }
 
 function load_game() {
-    loadStrings("save_game.txt", (lines) => {
-      for (let i = 0; i < 9; i++) {
-        let str_values = lines[i].split(",");
-        let row = [];
-  
-        for (let v of str_values) {
-          if (v !== "") {
-            row.push(int(v));
-          }
-        }
-  
-        answer.push(row);
-        let copied_row = [];
-        for (let val of row) {
-          copied_row.push(val);
-        }
-        grid.push(copied_row);
+  grid = [];
+  answer = [];
+  entry_cell = [];
+
+  loadStrings("save_game.txt", (lines) => {
+    if (!lines || lines.length < 10) {
+      print("Invalid save file");
+      return;
+    }
+
+    for (let i = 0; i < 9; i++) {
+      let str_values = lines[i].split(",");
+      let row = [];
+      for (let v of str_values) {
+        if (v !== "") row.push(int(v));
       }
-  
-      let header = lines[9];
-      if (header !== "ENTRY_CELL") {
-        print("error");
-        return;
+      answer.push(row);
+      grid.push([...row]); // copy
+    }
+
+    if (lines[9].trim() !== "ENTRY_CELL") {
+      print("Invalid file format");
+      return;
+    }
+
+    for (let i = 10; i < lines.length; i++) {
+      let coords = lines[i].trim().split(",");
+      if (coords.length === 2) {
+        let r = int(coords[0]);
+        let c = int(coords[1]);
+        entry_cell.push([r, c]);
+        grid[r][c] = 0;
       }
-  
-      for (let i = 10; i < lines.length; i++) {
-        let coords = lines[i].trim().split(",");
-        if (coords.length === 2) {
-          let r = int(coords[0]);
-          let c = int(coords[1]);
-          entry_cell.push([r, c]);
-  
-          for (let i = 0; i < 9; i++) {
-            for (let j = 0; j < 9; j++) {
-              if (i === r && j === c) {
-                grid[i][j] = 0;
-              }
-            }
-          }
-        }
-      }
-      status = 2;
-    });
+    }
+
+    status = 2;
+    print("Game loaded");
+  });
 }
 
 function save_game() {
@@ -293,7 +289,13 @@ function keyPressed(){
                 correct_cell.push([r, c]);
             }
         }
+    } else if (key === 's' || key === 'S') {
+        save_game();
+    } else if (key === 'r' || key === 'R') {
+        editable = true;
+        status = 2;
     }
+
 }
 
 function setup(){
