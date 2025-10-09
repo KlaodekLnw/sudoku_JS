@@ -75,7 +75,7 @@ function sudoku(){
 function generate_game(){
     entry_cell = [];
     answer = [];
-    sudoku()
+    sudoku();
     for (let i = 0; i < 9; i++) {
         let row = [];
         for (let j = 0; j < 9; j++) {
@@ -96,7 +96,7 @@ function generate_game(){
 function interface(){
     background(200);
     fill(0);
-    textSize(100);
+    textSize(45);
     text("sudoku",(width-300)/2,150);
     textSize(45);
     text("new game",(width-200)/2,height-400);
@@ -306,7 +306,7 @@ function setup(){
         }  
         num.push(temp);
     }
-    createCanvas(1270,900);
+    createCanvas(900,800);
     generate_game();
     print(answer);
 }
