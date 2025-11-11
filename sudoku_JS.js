@@ -525,7 +525,12 @@ function flowchart(x, y) {
 }
 
 function inCorrectCell(r, c) {
-  return correct_cell.some(cell => cell[0] === r && cell[1] === c);
+  for (let i = 0; i < correct_cell.length; i++) {
+    if (correct_cell[i][0] === r && correct_cell[i][1] === c) {
+      return true;
+    }
+  }
+  return false;
 }
 
 function setup(){
