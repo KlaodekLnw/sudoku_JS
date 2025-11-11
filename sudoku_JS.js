@@ -157,26 +157,35 @@ function show(){
             }
       
             if (grid[i][j] !== 0) {
-                if (!entry_cell.some(c => c[0] === i && c[1] === j)) {
+                let isEntry = false;
+                for (let k = 0; k < entry_cell.length; k++) {
+                    if (entry_cell[k][0] === i && entry_cell[k][1] === j) {
+                        isEntry = true;
+                        break;
+                    }
+                }
+                
+                if (!isEntry) {
                     fill(180, 220, 255);
                     noStroke();
                     rect(j * cell_w, i * cell_h, cell_w, cell_h);
                     stroke(0);
-                } else {
-                    if (!check_rule(grid, i, j, grid[i][j])) {
-                        fill(180, 0, 0);
-                        noStroke();
-                        rect(j * cell_w, i * cell_h, cell_w, cell_h);
-                        stroke(0);
-                    }
-              }
+                }
               
-              if (correct_cell.some(c => c[0] === i && c[1] === j)) {
-                  fill(102, 255, 102);
-                  noStroke();
-                  rect(j * cell_w, i * cell_h, cell_w, cell_h);
-                  stroke(0);
-              }
+                let isCorrect = false;
+                for (let k = 0; k < correct_cell.length; k++) {
+                    if (correct_cell[k][0] === i && correct_cell[k][1] === j) {
+                        isCorrect = true;
+                        break;
+                    }
+                }
+                
+                if (isCorrect) {
+                    fill(102, 255, 102);
+                    noStroke();
+                    rect(j * cell_w, i * cell_h, cell_w, cell_h);
+                    stroke(0);
+                }
           }
   
           if (grid[i][j] !== 0) {
@@ -287,7 +296,15 @@ function mousePressed() {
         let col = Math.floor(mouseX / cell_w);
         let row = Math.floor(mouseY / cell_h);
         if (row >= 0 && row < 9 && col >= 0 && col < 9) {
-            if (entry_cell.some(cell => cell[0] === row && cell[1] === col)) {
+            let isEntry = false;
+            for (let i = 0; i < entry_cell.length; i++) {
+                if (entry_cell[i][0] === row && entry_cell[i][1] === col) {
+                    isEntry = true;
+                    break;
+                }
+            }
+            
+            if (isEntry) {
                 selected_cell = [row, col];
             } else {
                 selected_cell = [-1, -1];
@@ -304,12 +321,20 @@ function keyPressed(){
     if (selected_cell[0] === -1 && selected_cell[1] === -1) return;
     let row = selected_cell[0];
     let col = selected_cell[1];
+    let isEntry = false;
+    for (let i = 0; i < entry_cell.length; i++) {
+        if (entry_cell[i][0] === row && entry_cell[i][1] === col) {
+            isEntry = true;
+            break;
+        }
+    }
+    
     if ("123456789".includes(key) && status === 2) {
-        if (entry_cell.some(cell => cell[0] === row && cell[1] === col)) {
+        if (isEntry) {
             grid[row][col] = parseInt(key);
         }
     } else if (key === '0' || keyCode === DELETE) {
-        if (entry_cell.some(cell => cell[0] === row && cell[1] === col)) {
+        if (isEntry) {
             grid[row][col] = 0;
         }
     }
