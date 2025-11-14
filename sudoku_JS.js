@@ -209,10 +209,10 @@ function show(){
 
   if (arraysEqual(grid, answer)) {
       fill(255);
-      rect(width - 300, height - 100, 170, 50);
+      rect(width - 190, height - 100, 170, 50);
       fill(0);
       textSize(50);
-      text("restart", width - 215, height - 80);
+      text("restart", width - 190 + 170 / 2, height - 100 + 50 / 2);
   }
 }
 
@@ -422,10 +422,10 @@ function draw(){
         textSize(35);
         if (status === 2 || status === 3) {
             fill(255);
-            rect(width - 300, height - 100, 170, 50);
+            rect(width - 190, height - 100, 170, 50);
             fill(0);
             textSize(50);
-            text("restart", width - 215, height - 80);
+            text("restart", width - 190 + 170 / 2, height - 100 + 50 / 2);
         }
     }
 }
