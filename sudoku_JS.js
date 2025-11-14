@@ -67,6 +67,28 @@ function sudoku(){
         return true;
     }
 }
+
+function count_empty_cell(board){
+    let emptyCounts = [];
+    for (let r = 0; r < 9; r++) {
+        let count = 0;
+        for (let c = 0; c < 9; c++) {
+            if (board[r][c] === 0)count++;
+        }
+        emptyCounts.push(count);
+    }
+
+    return emptyCounts;
+}
+
+function display_empty_count(counts) {
+    fill(0);
+    textSize(20);
+    for (let r = 0; r < 9; r++) {
+        let message = "empty cells : " + counts[r];
+        text(message, (width * 0.7) + 90, (r * (height / 9)) + 25);
+    }
+}
                 
 function generate_game(){
     entry_cell = [];
@@ -87,6 +109,7 @@ function generate_game(){
             entry_cell.push([row, col]);
         }
     }
+    emptyCounts = count_empty_cell(grid);
 }
 
 function interface(){
@@ -214,6 +237,7 @@ function show(){
       textSize(50);
       text("restart", width - 190 + 170 / 2, height - 100 + 50 / 2);
   }
+  display_empty_count(emptyCounts);
 }
 
 function load_game() {
