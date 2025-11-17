@@ -83,11 +83,28 @@ function count_empty_cell(board){
 
 function display_empty_count(counts) {
     fill(0);
-    textSize(20);
+    textSize(22);
+    let cell_h = height / 9;
+    let box_w = 80;
+    let box_h = cell_h * 0.6;
     for (let r = 0; r < 9; r++) {
-        let message = "empty cells : " + counts[r];
-        text(message, (width * 0.7) + 90, (r * (height / 9)) + 25);
+        let message = counts[r];
+        fill(255);
+        stroke(0);
+        strokeWeight(2);
+        rect((width * 0.7) + 10, r * cell_h + (cell_h - box_h)/2 + 13, box_w, box_h);
+
+        fill(0);
+        noStroke();
+        textAlign(CENTER, CENTER);
+        text(message, (width * 0.7) + 10 + box_w/2, r * cell_h + cell_h/2 + 13);
     }
+    fill(0);
+    textSize(25);
+    textAlign(LEFT, BOTTOM);
+    text("Empty: ", (width * 0.7) + 10, 0 * cell_h + 25);
+    stroke(0);
+    strokeWeight(1);
 }
                 
 function generate_game(){
@@ -136,8 +153,8 @@ function interface(){
 
 function draw_table(){
     strokeWeight(3);
-    line(0, height / 3, width * 0.7, height / 3);
-    line(0, height / 3 * 2, width * 0.7, height / 3 * 2);
+    line(0, (height/9)*3,  width*0.7, (height/9)*3);
+    line(0, (height/9)*6,  width*0.7, (height/9)*6);
     line((width * 0.7) / 3, 0, (width * 0.7) / 3, height);
     line((width * 0.7) / 3 * 2, 0, (width * 0.7) / 3 * 2, height);
 
@@ -212,7 +229,7 @@ function show(){
                     stroke(0);
                 }
           }
-  
+
           if (grid[i][j] !== 0) {
               fill(0);
               textAlign(CENTER, CENTER);
@@ -337,7 +354,7 @@ function mousePressed() {
             }
         }
     }
-    if ((status === 2 || status === 3) && mouseX > width - 300 && mouseX < width - 130 && mouseY > height - 100 && mouseY < height - 50) {
+    if ((status === 2 || status === 3) && mouseX > (width - 190) && mouseX < (width - 190 + 170) && mouseY > (height - 100) && mouseY < (height - 100 + 50)) {
         console.log("restart");
         restart_game();
     }
@@ -448,7 +465,7 @@ function draw(){
             fill(255);
             rect(width - 190, height - 100, 170, 50);
             fill(0);
-            textSize(50);
+            textAlign(CENTER, CENTER);
             text("restart", width - 190 + 170 / 2, height - 100 + 50 / 2);
         }
     }
