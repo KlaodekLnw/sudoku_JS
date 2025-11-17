@@ -372,23 +372,31 @@ function keyPressed(){
         }
     }
     
-    if ("123456789".includes(key) && status === 2) {
-        if (isEntry) {
-            grid[row][col] = parseInt(key);
+    if (isEntry && status === 2) {
+        let prev_value = grid[row][col];
+        if ("123456789".includes(key) && status === 2) {
+            if (isEntry) {
+                grid[row][col] = parseInt(key);
+            }
+        } else if (key === '0' || keyCode === DELETE) {
+            if (isEntry) {
+                grid[row][col] = 0;
+            }
         }
-    } else if (key === '0' || keyCode === DELETE) {
-        if (isEntry) {
-            grid[row][col] = 0;
+      
+        correct_cell = [];
+        for (let i = 0; i < entry_cell.length; i++) {
+            let [r, c] = entry_cell[i];
+            if (grid[r][c] === answer[r][c]) {
+                correct_cell.push([r, c]);
+            }
+        }
+        
+        if (grid[row][col] === answer[row][col] && prev_value !== answer[row][col]) {
+            emptyCounts = count_empty_cell(grid);
         }
     }
 
-    correct_cell = [];
-    for (let i = 0; i < entry_cell.length; i++) {
-        let [r, c] = entry_cell[i];
-        if (grid[r][c] === answer[r][c]) {
-            correct_cell.push([r, c]);
-        }
-    }
     
     if (key === 's' || key === 'S') {
         save_game();
