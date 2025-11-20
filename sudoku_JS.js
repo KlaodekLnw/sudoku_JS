@@ -16,9 +16,22 @@ let status = 1;
 let correct_cell = [];
 let selected_cell = [-1, -1];
 let load = false;
-let editable = true;
+let editable = true;  
 let rowQuizIndex = 0;
 let waitingRowAnswer = true;
+let current_empty_row = 0;
+let userEmptyInput = "";
+let empty_counts_user = [];
+for (let i = 0; i < 9; i++) {
+    emptyCountsUser.push(null);
+}
+
+function updateCurrentEmptyRow() {
+    let emptyCounts = count_empty_cell(grid);
+    while (current_empty_row < 9 && emptyCounts[current_empty_row] === 0) {
+        current_empty_row++;
+    }
+}
 
 function check_rule(board,row,col,num){
     //check row
@@ -256,16 +269,6 @@ function show(){
       textSize(15);
       text("restart", width - 130 + 45, height - 70 + 16);
   }
-  if (waitingRowAnswer) {
-    stroke(255, 0, 0);
-    strokeWeight(4);
-    noFill();
-
-    let cell_w = (width * 0.7) / 9;
-    let cell_h = height / 9;
-
-    rect(0, rowQuizIndex * cell_h, cell_w * 9, cell_h);
-  }
   display_empty_count(emptyCounts);
 }
 
@@ -372,43 +375,68 @@ function mousePressed() {
 }
 
 function keyPressed(){
-    if (selected_cell[0] === -1 && selected_cell[1] === -1) return;
-    let row = selected_cell[0];
-    let col = selected_cell[1];
-    let isEntry = false;
-    for (let i = 0; i < entry_cell.length; i++) {
-        if (entry_cell[i][0] === row && entry_cell[i][1] === col) {
-            isEntry = true;
-            break;
-        }
-    }
-    
-    if (isEntry && status === 2) {
-        let prev_value = grid[row][col];
-        if ("123456789".includes(key) && status === 2) {
-            if (isEntry) {
-                grid[row][col] = parseInt(key);
-            }
-        } else if (key === '0' || keyCode === DELETE) {
-            if (isEntry) {
-                grid[row][col] = 0;
-            }
-        }
-      
-        correct_cell = [];
+    if (selected_cell[0] !== -1 && selected_cell[1] !== -1) {
+        let row = selected_cell[0];
+        let col = selected_cell[1];
+        let isEntry = false;
         for (let i = 0; i < entry_cell.length; i++) {
-            let [r, c] = entry_cell[i];
-            if (grid[r][c] === answer[r][c]) {
-                correct_cell.push([r, c]);
+            if (entry_cell[i][0] === row && entry_cell[i][1] === col) {
+                isEntry = true;
+                break;
             }
         }
         
-        if (grid[row][col] === answer[row][col] && prev_value !== answer[row][col]) {
-            emptyCounts = count_empty_cell(grid);
+        if (isEntry && status === 2) {
+            let prev_value = grid[row][col];
+            if ("123456789".includes(key) && status === 2) {
+                if (isEntry) {
+                    grid[row][col] = parseInt(key);
+                }
+            } else if (key === '0' || keyCode === DELETE) {
+                if (isEntry) {
+                    grid[row][col] = 0;
+                }
+            }
+
+            correct_cell = [];
+            for (let i = 0; i < entry_cell.length; i++) {
+                let [r, c] = entry_cell[i];
+                if (grid[r][c] === answer[r][c]) {
+                    correct_cell.push([r, c]);
+                }
+                
+                
+                if (grid[row][col] === answer[row][col] && prev_value !== answer[row][col]) {
+                    emptyCounts = count_empty_cell(grid);
+                }
+            }
+            
+            for (let r = 0; r < 9; r++) {
+                let rowValues = [];
+                for (let c = 0; c < 9; c++) {
+                    if (grid[r][c] === answer[r][c] && grid[r][c] !== 0) {
+                        rowValues.push(grid[r][c]);
+                    }
+                }
+                empty_counts_user[r] = rowValues.join("");
+            }
+            
+            let allCorrect = true;
+            for (let c = 0; c < 9; c++) {
+                if (grid[current_empty_row][c] !== answer[current_empty_row][c]) {
+                    allCorrect = false;
+                    break;
+                }
+            }
+
+            if (allCorrect) {
+                current_empty_row++;
+                while (current_empty_row < 9 && count_empty_cell(grid)[current_empty_row] === 0) {
+                    current_empty_row++;
+                }
+            }  
         }
     }
-
-    
     if (key === 's' || key === 'S') {
         save_game();
     }
@@ -481,6 +509,15 @@ function draw(){
         fill(0);
         textSize(35);
         if (status === 2 || status === 3) {
+            let cell_h = height / 9;
+            let cell_w = width * 0.7 / 9;
+            noFill();
+            stroke(255, 0, 0);
+            strokeWeight(4);
+            if(current_empty_row < 9){
+                rect(0, current_empty_row * cell_h, width * 0.7, cell_h);
+            }
+            noStroke();
             fill(255);
             rect(width - 130, height - 70, 90, 32);
             noStroke();
