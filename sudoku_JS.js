@@ -18,7 +18,9 @@ let selected_cell = [-1, -1];
 let load = false;
 let editable = true;
 let highlightRow = 0;
-let rowSpeed = 200; 
+let rowSpeed = 200;
+let rowQuizIndex = 0;
+let waitingRowAnswer = true;
 
 function check_rule(board,row,col,num){
     //check row
@@ -262,6 +264,16 @@ function show(){
       fill(0);
       textSize(50);
       text("restart", width - 190 + 170 / 2, height - 100 + 50 / 2);
+  }
+  if (waitingRowAnswer) {
+    stroke(255, 0, 0);
+    strokeWeight(4);
+    noFill();
+
+    let cell_w = (width * 0.7) / 9;
+    let cell_h = height / 9;
+
+    rect(0, rowQuizIndex * cell_h, cell_w * 9, cell_h);
   }
   display_empty_count(emptyCounts);
 }
