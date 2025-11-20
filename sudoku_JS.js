@@ -23,7 +23,7 @@ let current_empty_row = 0;
 let userEmptyInput = "";
 let empty_counts_user = [];
 for (let i = 0; i < 9; i++) {
-    emptyCountsUser.push(null);
+    empty_counts_user.push(null);
 }
 
 function updateCurrentEmptyRow() {
@@ -385,7 +385,6 @@ function keyPressed(){
                 break;
             }
         }
-        
         if (isEntry && status === 2) {
             let prev_value = grid[row][col];
             if ("123456789".includes(key) && status === 2) {
@@ -437,6 +436,31 @@ function keyPressed(){
             }  
         }
     }
+    if (isEntry && status === 2) {
+        let prev_value = grid[row][col];
+        if ("123456789".includes(key) && status === 2) {
+            if (isEntry) {
+                grid[row][col] = parseInt(key);
+            }
+        } else if (key === '0' || keyCode === DELETE) {
+            if (isEntry) {
+                grid[row][col] = 0;
+            }
+        }
+      
+        correct_cell = [];
+        for (let i = 0; i < entry_cell.length; i++) {
+            let [r, c] = entry_cell[i];
+            if (grid[r][c] === answer[r][c]) {
+                correct_cell.push([r, c]);
+            }
+        }
+        
+        if (grid[row][col] === answer[row][col] && prev_value !== answer[row][col]) {
+            emptyCounts = count_empty_cell(grid);
+        }
+    }
+
     if (key === 's' || key === 'S') {
         save_game();
     }
@@ -506,6 +530,16 @@ function draw(){
         }
         show();
         draw_table();
+        let cell_h = height / 9;
+        let cell_w = width * 0.7 / 9;
+        fill(0);
+        textSize(22);
+        textAlign(CENTER, CENTER);
+        for(let r = 0; r < 9; r++){
+            if(empty_counts_user[r] !== null){
+                text(empty_counts_user[r], width * 0.7 + 200, r * cell_h + cell_h/2 + 20);
+            }
+        }
         fill(0);
         textSize(35);
         if (status === 2 || status === 3) {
@@ -518,6 +552,7 @@ function draw(){
                 rect(0, current_empty_row * cell_h, width * 0.7, cell_h);
             }
             noStroke();
+            stroke(0);
             fill(255);
             rect(width - 130, height - 70, 90, 32);
             noStroke();
