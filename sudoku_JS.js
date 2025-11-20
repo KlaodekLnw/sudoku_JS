@@ -17,8 +17,6 @@ let correct_cell = [];
 let selected_cell = [-1, -1];
 let load = false;
 let editable = true;
-let highlightRow = 0;
-let rowSpeed = 200;
 let rowQuizIndex = 0;
 let waitingRowAnswer = true;
 
@@ -192,13 +190,6 @@ function show(){
             let cell_w = (width * 0.7) / 9;
             let cell_h = height / 9;
             
-            if (i === highlightRow) {
-                noStroke();
-                fill(255, 255, 0, 100);
-                rect(j * cell_w, i * cell_h, cell_w, cell_h);
-                stroke(0);
-            }
-            
             if (selected_cell) {
                 let [sel_i, sel_j] = selected_cell;
                 if (i === sel_i || j === sel_j) {
@@ -260,10 +251,10 @@ function show(){
 
   if (arraysEqual(grid, answer)) {
       fill(255);
-      rect(width - 190, height - 100, 170, 50);
+      rect(width - 130, height - 70, 90, 32);
       fill(0);
-      textSize(50);
-      text("restart", width - 190 + 170 / 2, height - 100 + 50 / 2);
+      textSize(15);
+      text("restart", width - 130 + 45, height - 70 + 16);
   }
   if (waitingRowAnswer) {
     stroke(255, 0, 0);
@@ -375,8 +366,7 @@ function mousePressed() {
             }
         }
     }
-    if ((status === 2 || status === 3) && mouseX > (width - 190) && mouseX < (width - 190 + 170) && mouseY > (height - 100) && mouseY < (height - 100 + 50)) {
-        console.log("restart");
+    if ((status === 2 || status === 3) && mouseX > (width - 130) && mouseX < (width - 130 + 90) && mouseY > (height - 70) && mouseY < (height - 70 + 32)) {
         restart_game();
     }
 }
@@ -479,9 +469,6 @@ function setup(){
 }
     
 function draw(){
-    if (frameCount % rowSpeed === 0) {
-        highlightRow = (highlightRow + 1) % 9;
-    }
     if(status == 1){
         interface();
     }else{
@@ -495,10 +482,12 @@ function draw(){
         textSize(35);
         if (status === 2 || status === 3) {
             fill(255);
-            rect(width - 190, height - 100, 170, 50);
+            rect(width - 130, height - 70, 90, 32);
+            noStroke();
             fill(0);
+            textSize(15);
             textAlign(CENTER, CENTER);
-            text("restart", width - 190 + 170 / 2, height - 100 + 50 / 2);
+            text("restart", width - 130 + 45, height - 70 + 16);
         }
     }
 }
