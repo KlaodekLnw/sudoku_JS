@@ -17,6 +17,8 @@ let correct_cell = [];
 let selected_cell = [-1, -1];
 let load = false;
 let editable = true;
+let highlightRow = 0;
+let rowSpeed = 200; 
 
 function check_rule(board,row,col,num){
     //check row
@@ -187,7 +189,14 @@ function show(){
             textSize(20);
             let cell_w = (width * 0.7) / 9;
             let cell_h = height / 9;
-      
+            
+            if (i === highlightRow) {
+                noStroke();
+                fill(255, 255, 0, 100);
+                rect(j * cell_w, i * cell_h, cell_w, cell_h);
+                stroke(0);
+            }
+            
             if (selected_cell) {
                 let [sel_i, sel_j] = selected_cell;
                 if (i === sel_i || j === sel_j) {
@@ -458,6 +467,9 @@ function setup(){
 }
     
 function draw(){
+    if (frameCount % rowSpeed === 0) {
+        highlightRow = (highlightRow + 1) % 9;
+    }
     if(status == 1){
         interface();
     }else{
